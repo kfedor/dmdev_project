@@ -1,19 +1,22 @@
-CREATE
-DATABASE project_write_read;
+CREATE DATABASE project_write_read;
 
-CREATE TABLE user_type
+CREATE TABLE IF NOT EXISTS user_type
 (
     id   SERIAL PRIMARY KEY,
-    type VARCHAR(128) NOT NULL
+    type VARCHAR(128) UNIQUE NOT NULL
 );
 
-CREATE TABLE gender
+CREATE TABLE IF NOT EXISTS user_details
 (
-    id     SERIAL PRIMARY KEY,
-    gender VARCHAR(128) NOT NULL
+    id         SERIAL PRIMARY KEY,
+    first_name VARCHAR(128)        NOT NULL,
+    last_name  VARCHAR(128)        NOT NULL,
+    email      VARCHAR(128) UNIQUE NOT NULL,
+    age        INT,
+    gender     VARCHAR(128)        NOT NULL
 );
 
-CREATE TABLE users
+CREATE TABLE IF NOT EXISTS users
 (
     id              SERIAL PRIMARY KEY,
     login           VARCHAR(128) UNIQUE NOT NULL,
@@ -22,47 +25,37 @@ CREATE TABLE users
     user_details_id INT REFERENCES user_details (id)
 );
 
-CREATE TABLE user_details
+CREATE TABLE IF NOT EXISTS text_style
 (
     id         SERIAL PRIMARY KEY,
-    first_name VARCHAR(128)        NOT NULL,
-    last_name  VARCHAR(128)        NOT NULL,
-    email      VARCHAR(128) UNIQUE NOT NULL,
-    age        INT,
-    gender_id  INT REFERENCES gender (id)
+    text_style VARCHAR(128) UNIQUE NOT NULL
 );
 
-CREATE TABLE text_style
-(
-    id         SERIAL PRIMARY KEY,
-    text_style VARCHAR(128) NOT NULL
-);
-
-
-CREATE TABLE text
+CREATE TABLE IF NOT EXISTS text
 (
     id       SERIAL PRIMARY KEY,
-    name     VARCHAR(128) NOT NULL,
-    pages    INT          NOT NULL,
+    name     VARCHAR(128)   NOT NULL,
+    text     VARCHAR UNIQUE NOT NULL,
+    pages    INT            NOT NULL,
     style_id INT REFERENCES text_style (id)
 );
-CREATE TABLE text_rating
+
+CREATE TABLE IF NOT EXISTS text_rating
 (
-    text_id INT REFERENCES text(id),
-    rating NUMERIC
+    text_id INT REFERENCES text (id),
+    rating  NUMERIC
 );
 
-CREATE TABLE comment
+CREATE TABLE IF NOT EXISTS comment
 (
-    id           SERIAL PRIMARY KEY,
-    comment_text VARCHAR(8000) NOT NULL,
-    text_id      INT REFERENCES text (id),
-    users_id     INT REFERENCES users (id)
+    id       SERIAL PRIMARY KEY,
+    text     VARCHAR(8000) NOT NULL,
+    text_id  INT REFERENCES text (id),
+    users_id INT REFERENCES users (id)
 );
 
-CREATE TABLE users_text
+CREATE TABLE IF NOT EXISTS users_text
 (
     users_id INT REFERENCES users (id),
     text_id  INT REFERENCES text (id)
 );
-
